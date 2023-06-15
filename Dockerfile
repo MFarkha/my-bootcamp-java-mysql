@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-alpine
+FROM amazoncorretto:11-alpine3.14
 RUN mkdir /opt/app
 COPY build/libs/bootcamp-java-mysql-project-1.0-SNAPSHOT.jar /opt/app
 WORKDIR /opt/app
