@@ -13,7 +13,7 @@ services:
   #   environment:
   #     - PMA_HOST=mysql
   my-java-app:
-    image: myapp:2.0
+    image: myapp:3.0
     depends_on:
       - mysql
     ports:
