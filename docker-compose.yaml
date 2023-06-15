@@ -1,7 +1,9 @@
 version: '3'
 services:
   mysql:
+    container_name: mysql
     image: mysql
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - 3306:3306
     environment:
@@ -13,6 +15,7 @@ services:
   #   environment:
   #     - PMA_HOST=mysql
   my-java-app:
+    container_name: myapp
     image: myapp:3.0
     depends_on:
       - mysql
