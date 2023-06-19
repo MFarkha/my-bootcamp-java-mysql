@@ -1,0 +1,57 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '686376b0-e6dd-4c98-b129-357482a6e909'
+  imageRepository: 'farhadmaten'
+  containerRegistry: 'myconregfarhad.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: 'my-node-app-$(Build.BuildId)'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+- stage: Deploy
+  displayName: Deploy to Azure App Service Docker
+  jobs: 
+  - job: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Pay-As-You-Go(4bf84e6a-795c-4758-ba11-e44f0ef0581a)'
+        appType: 'webAppContainer'
+        WebAppName: 'My-Java-app-Docker'
+        DockerNamespace: '$(containerRegistry)'
+        DockerRepository: '$(imageRepository)'
+        DockerImageTag: '$(tag)'
+        AppSettings: '-DOCKER_REGISTRY_SERVER_PASSWORD Iq9aaDBn1yKvzuzb+T8gKvVaBWyJbFVsbnaOKC5DC3+ACRA77cF8 -DOCKER_REGISTRY_SERVER_USERNAME MyConRegFarhad'
