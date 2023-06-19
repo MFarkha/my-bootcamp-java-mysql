@@ -27,3 +27,4 @@ steps:
     repository: 'farhadmaten'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
+    tags: 'my-java-app-$(Build.BuildId)'
