@@ -7,7 +7,12 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=my-secret-pw
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=team-member-projects
+      - MYSQL_USER=admin    
+      - MYSQL_PASSWORD=adminpass
+    volumes:
+    - mysql-data:/var/lib/mysql
   # phpmyadmin:
   #   image: phpmyadmin
   #   ports:
@@ -16,13 +21,16 @@ services:
   #     - PMA_HOST=mysql
   my-java-app:
     container_name: myapp
-    image: myapp:3.0
+    image: myapp:1.1
     depends_on:
       - mysql
     ports:
       - 8081:8080
     environment:
-      - DB_USER=root
-      - DB_NAME=mysql 
-      - DB_SERVER=mysql 
-      - DB_PWD=my-secret-pw
+      - DB_USER=admin
+      - DB_NAME=team-member-projects
+      - DB_SERVER=mysql
+      - DB_PWD=adminpass
+volumes:
+  mysql-data:
+    driver: local
